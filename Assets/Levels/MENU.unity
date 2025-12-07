@@ -1306,7 +1306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e5721e14441fd4c8140785f4420a60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuPausaPrefab: {fileID: 5943417181536095530, guid: d0cc3b5c05c9a084583f2c7187eef9a8,
+  menuPausaPrefab: {fileID: 4691768254371786862, guid: d0cc3b5c05c9a084583f2c7187eef9a8,
     type: 3}
 --- !u!4 &605158539
 Transform:
