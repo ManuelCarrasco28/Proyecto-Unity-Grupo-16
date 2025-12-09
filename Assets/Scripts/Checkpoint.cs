@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,24 +6,38 @@ public class Checkpoint : MonoBehaviour
 {
     [SerializeField] GameObject player;
 
-    [SerializeField] List<GameObject> checkPoints;
+    [SerializeField] List<Transform> checkPoints; // ← ahora es Transform, no GameObject
 
-    [SerializeField] Vector3 vectorPoint;
+    Transform currentSpawnPoint;
 
-    [SerializeField] float dead;
+    [SerializeField] float dead = 10f;
 
-    // Update is called once per frame
+    void Start()
+    {
+        // Spawn inicial
+        currentSpawnPoint = checkPoints[0];
+    }
+
     void Update()
     {
         if (player.transform.position.y < -dead)
-            player.transform.position = vectorPoint;
+            RespawnPlayer();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("point")) {
-            vectorPoint = player.transform.position;
-            Destroy(other.gameObject);
+        if (other.CompareTag("point"))
+        {
+            // Guardamos el checkpoint real
+            currentSpawnPoint = other.transform;
+
+            // Lo desactivamos para que no lo vuelva a tomar
+            other.gameObject.SetActive(false);
         }
+    }
+
+    void RespawnPlayer()
+    {
+        player.transform.position = currentSpawnPoint.position;
     }
 }

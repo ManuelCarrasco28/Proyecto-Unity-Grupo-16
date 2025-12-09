@@ -1,30 +1,58 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Codigo_Pausa : MonoBehaviour
 {
+    [Header("Menus")]
     public GameObject ObjetoMenuPausa;
     public GameObject PanelPrincipal;
     public GameObject PanelOpciones;
     public GameObject PanelSalir;
 
+    [Header("Sensibilidad")]
+    public Slider SliderSensibilidad;
+    public static float sensibilidad = 1f;
+
     private bool Pausa = false;
     private AudioSource[] todosLosAudios;
 
+    void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
+    void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
+
     void Start()
     {
-        // Guardar todos los audios de la escena
-        todosLosAudios = FindObjectsOfType<AudioSource>();
+        RefrescarAudios();
+        CerrarMenus();
+        Pausa = false;
 
-        // Estado inicial
-        ObjetoMenuPausa.SetActive(false);
-        PanelPrincipal.SetActive(false);
-        PanelOpciones.SetActive(false);
-        PanelSalir.SetActive(false);
+        if (SliderSensibilidad != null)
+            SliderSensibilidad.value = sensibilidad;
+
+        Time.timeScale = 1;
+        BloquearCursor();
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        RefrescarAudios();
+        Pausa = false;
+        Time.timeScale = 1;
+        CerrarMenus();
+        BloquearCursor();
+
+        if (SliderSensibilidad != null)
+            SliderSensibilidad.value = sensibilidad;
     }
 
     void Update()
     {
+        // 🔥 FIX DEFINITIVO: Unity activa el cursor al presionar ESC aunque no quieras
+        if (!Pausa && Cursor.lockState != CursorLockMode.Locked)
+        {
+            BloquearCursor();
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!Pausa)
@@ -32,14 +60,29 @@ public class Codigo_Pausa : MonoBehaviour
             else
                 Resumir();
         }
+
+        if (SliderSensibilidad != null)
+            sensibilidad = SliderSensibilidad.value;
     }
 
-    // ========== PAUSAR ==========
+    void RefrescarAudios() => todosLosAudios = FindObjectsOfType<AudioSource>();
+
+    void CerrarMenus()
+    {
+        ObjetoMenuPausa.SetActive(false);
+        PanelPrincipal.SetActive(false);
+        PanelOpciones.SetActive(false);
+        PanelSalir.SetActive(false);
+    }
+
+    // ============================
+    //       ABRIR PAUSA
+    // ============================
+
     void AbrirPausa()
     {
-        if (Pausa) return; // ⛔ Previene doble apertura
-
         Pausa = true;
+        RefrescarAudios();
 
         ObjetoMenuPausa.SetActive(true);
         PanelPrincipal.SetActive(true);
@@ -47,14 +90,51 @@ public class Codigo_Pausa : MonoBehaviour
         PanelSalir.SetActive(false);
 
         Time.timeScale = 0;
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        MostrarCursor();
 
         foreach (AudioSource s in todosLosAudios)
-            s.Pause();
+            if (s != null) s.Pause();
     }
 
-    // ========== OPCIONES ==========
+    // ============================
+    //         RESUMIR
+    // ============================
+
+    public void Resumir()
+    {
+        Pausa = false;
+        RefrescarAudios();
+
+        ObjetoMenuPausa.SetActive(false);
+        PanelPrincipal.SetActive(false);
+        PanelOpciones.SetActive(false);
+        PanelSalir.SetActive(false);
+
+        Time.timeScale = 1;
+        BloquearCursor();
+
+        foreach (AudioSource s in todosLosAudios)
+            if (s != null) s.UnPause();
+    }
+
+    // ============================
+    //   MANEJO DEL CURSOR
+    // ============================
+
+    private void MostrarCursor()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    private void BloquearCursor()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    // ----------------------------
+
     public void AbrirOpciones()
     {
         PanelPrincipal.SetActive(false);
@@ -69,34 +149,12 @@ public class Codigo_Pausa : MonoBehaviour
         PanelSalir.SetActive(false);
     }
 
-    // ========== REANUDAR ==========
-    public void Resumir()
-    {
-        if (!Pausa) return; // ⛔ Previene cerrar dos veces
-
-        Pausa = false;
-
-        ObjetoMenuPausa.SetActive(false);
-        PanelPrincipal.SetActive(false);
-        PanelOpciones.SetActive(false);
-        PanelSalir.SetActive(false);
-
-        Time.timeScale = 1;
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
-        foreach (AudioSource s in todosLosAudios)
-            s.UnPause();
-    }
-
-    // ========== IR AL MENÚ ==========
     public void IrAlMenu(string NombreMenu)
     {
         Time.timeScale = 1;
         SceneManager.LoadScene(NombreMenu);
     }
 
-    // ========== SALIR ==========
     public void SalirDelJuego()
     {
         Application.Quit();

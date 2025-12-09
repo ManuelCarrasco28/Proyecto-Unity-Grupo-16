@@ -76,7 +76,7 @@ public class ScoreManager : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = score + " Coins";
+            scoreText.text = score + " Fragmentos";
         }
     }
 
