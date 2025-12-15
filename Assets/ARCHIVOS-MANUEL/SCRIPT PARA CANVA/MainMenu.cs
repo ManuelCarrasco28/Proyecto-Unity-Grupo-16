@@ -45,6 +45,18 @@ public class MenuMain : MonoBehaviour
         SceneManager.LoadScene("L1-NILSON");  // Cambia por el nombre exacto de tu escena
     }
 
+
+    // Ir al menú principal (escena MENU)
+    public void IrAlMenu()
+    {
+        Time.timeScale = 1;                 // Asegura que no esté en pausa
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        SceneManager.LoadScene("MENU");     // Nombre EXACTO de la escena
+    }
+
+
     // Salir del juego
     public void QuitGame()
     {
