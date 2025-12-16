@@ -1,66 +1,83 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MenuMain : MonoBehaviour
 {
-    [Header("Panels del menú")]
-    public GameObject mainMenu;
-    public GameObject optionsMenu;
+    [Header("Panels del menÃº")]
+    public GameObject mainMenu;      // MainMenu
+    public GameObject optionsMenu;   // MainOpciones
+    public GameObject manualMenu;    // MainManual
+
+    [Header("BotÃ³n Manual")]
+    public GameObject btnManual;     // Btn-Manual
 
     void Start()
     {
-        // Asegura que, al volver desde pausa u otra escena, todo funcione bien
         Time.timeScale = 1;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
-        // Activar el panel principal al entrar al menú
         mainMenu.SetActive(true);
         optionsMenu.SetActive(false);
+        manualMenu.SetActive(false);
+
+        if (btnManual != null)
+            btnManual.SetActive(false);   // oculto al inicio
     }
 
-    // Abre las opciones
-    public void OpenOptionsPanel()
-    {
-        mainMenu.SetActive(false);
-        optionsMenu.SetActive(true);
-    }
-
-    // Vuelve al menú principal
+    // =========================
+    // MENÃš PRINCIPAL
+    // =========================
     public void OpenMainMenuPanel()
     {
         mainMenu.SetActive(true);
         optionsMenu.SetActive(false);
+        manualMenu.SetActive(false);
+
+        if (btnManual != null)
+            btnManual.SetActive(false);
     }
 
-    // Cargar el juego
+    // =========================
+    // OPCIONES
+    // =========================
+    public void OpenOptionsPanel()
+    {
+        mainMenu.SetActive(false);
+        optionsMenu.SetActive(true);
+        manualMenu.SetActive(false);
+
+        if (btnManual != null)
+            btnManual.SetActive(false);
+    }
+
+    // =========================
+    // MANUAL
+    // =========================
+    public void OpenManualPanel()
+    {
+        mainMenu.SetActive(false);
+        optionsMenu.SetActive(false);
+        manualMenu.SetActive(true);
+
+        if (btnManual != null)
+            btnManual.SetActive(true);   // ðŸ‘ˆ solo aquÃ­ aparece
+    }
+
+    // =========================
+    // JUGAR
+    // =========================
     public void PlayGame()
     {
-        Time.timeScale = 1;                 // Asegurar que el juego no esté pausado
-        Cursor.visible = false;             // Cursor oculto para gameplay
+        Time.timeScale = 1;
+        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        SceneManager.LoadScene("L1-NILSON");  // Cambia por el nombre exacto de tu escena
+        SceneManager.LoadScene("L1-NILSON");
     }
 
-
-    // Ir al menú principal (escena MENU)
-    public void IrAlMenu()
-    {
-        Time.timeScale = 1;                 // Asegura que no esté en pausa
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-
-        SceneManager.LoadScene("MENU");     // Nombre EXACTO de la escena
-    }
-
-
-    // Salir del juego
     public void QuitGame()
     {
         Application.Quit();
     }
 }
-    
