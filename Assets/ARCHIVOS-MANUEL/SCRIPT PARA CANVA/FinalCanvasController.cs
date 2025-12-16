@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class FinalCanvasController : MonoBehaviour
@@ -8,32 +8,43 @@ public class FinalCanvasController : MonoBehaviour
         // Forzar estado correcto del juego
         Time.timeScale = 1f;
 
-        // FORZAR el mouse visible y libre
+        // Mouse visible en pantalla final
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
 
-    // BOTÓN: JUGAR DE NUEVO
+    // =========================
+    // BOTÃ“N: JUGAR DE NUEVO
+    // =========================
     public void JugarDeNuevo()
     {
         Time.timeScale = 1f;
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        // ðŸ”´ REINICIAR FRAGMENTOS
+        if (ScoreManager.instance != null)
+        {
+            ScoreManager.instance.ResetScore();
+        }
 
         SceneManager.LoadScene("L1-NILSON");
     }
 
-    // BOTÓN: IR AL MENÚ
+    // =========================
+    // BOTÃ“N: IR AL MENÃš
+    // =========================
     public void IrAlMenu()
     {
         Time.timeScale = 1f;
+
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
         SceneManager.LoadScene("MENU");
     }
 
-    // OPCIONAL
     public void SalirDelJuego()
     {
         Application.Quit();
