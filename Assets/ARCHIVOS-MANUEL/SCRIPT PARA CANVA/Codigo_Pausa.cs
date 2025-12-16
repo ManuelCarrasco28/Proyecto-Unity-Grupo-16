@@ -17,6 +17,10 @@ public class Codigo_Pausa : MonoBehaviour
     private bool Pausa = false;
     private AudioSource[] todosLosAudios;
 
+    // ============================
+    //      CICLO DE VIDA
+    // ============================
+
     void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
     void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
 
@@ -30,7 +34,10 @@ public class Codigo_Pausa : MonoBehaviour
             SliderSensibilidad.value = sensibilidad;
 
         Time.timeScale = 1;
-        BloquearCursor();
+
+        // ⚠️ SOLO bloquear cursor si es gameplay
+        if (EsEscenaGameplay())
+            BloquearCursor();
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -39,15 +46,27 @@ public class Codigo_Pausa : MonoBehaviour
         Pausa = false;
         Time.timeScale = 1;
         CerrarMenus();
-        BloquearCursor();
 
         if (SliderSensibilidad != null)
             SliderSensibilidad.value = sensibilidad;
+
+        // ❌ NO bloquear cursor en MENU ni END
+        if (EsEscenaGameplay())
+            BloquearCursor();
+        else
+            MostrarCursor();
     }
+
+    // ============================
+    //         UPDATE
+    // ============================
 
     void Update()
     {
-        // 🔥 FIX DEFINITIVO: Unity activa el cursor al presionar ESC aunque no quieras
+        // ❌ No forzar cursor fuera del gameplay
+        if (!EsEscenaGameplay())
+            return;
+
         if (!Pausa && Cursor.lockState != CursorLockMode.Locked)
         {
             BloquearCursor();
@@ -65,7 +84,20 @@ public class Codigo_Pausa : MonoBehaviour
             sensibilidad = SliderSensibilidad.value;
     }
 
-    void RefrescarAudios() => todosLosAudios = FindObjectsOfType<AudioSource>();
+    // ============================
+    //      MÉTODOS AUX
+    // ============================
+
+    bool EsEscenaGameplay()
+    {
+        string escena = SceneManager.GetActiveScene().name;
+        return escena != "MENU" && escena != "END";
+    }
+
+    void RefrescarAudios()
+    {
+        todosLosAudios = FindObjectsOfType<AudioSource>();
+    }
 
     void CerrarMenus()
     {
@@ -76,7 +108,7 @@ public class Codigo_Pausa : MonoBehaviour
     }
 
     // ============================
-    //       ABRIR PAUSA
+    //       PAUSA
     // ============================
 
     void AbrirPausa()
@@ -96,19 +128,12 @@ public class Codigo_Pausa : MonoBehaviour
             if (s != null) s.Pause();
     }
 
-    // ============================
-    //         RESUMIR
-    // ============================
-
     public void Resumir()
     {
         Pausa = false;
         RefrescarAudios();
 
-        ObjetoMenuPausa.SetActive(false);
-        PanelPrincipal.SetActive(false);
-        PanelOpciones.SetActive(false);
-        PanelSalir.SetActive(false);
+        CerrarMenus();
 
         Time.timeScale = 1;
         BloquearCursor();
@@ -118,22 +143,24 @@ public class Codigo_Pausa : MonoBehaviour
     }
 
     // ============================
-    //   MANEJO DEL CURSOR
+    //      CURSOR
     // ============================
 
-    private void MostrarCursor()
+    void MostrarCursor()
     {
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
 
-    private void BloquearCursor()
+    void BloquearCursor()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    // ----------------------------
+    // ============================
+    //      BOTONES
+    // ============================
 
     public void AbrirOpciones()
     {

@@ -1,4 +1,4 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.UI;
 
@@ -11,8 +11,11 @@ public class LevelIntroVideo : MonoBehaviour
     [Header("Jugador")]
     public GameObject player;
 
-    [Header("M˙sica del nivel")]
-    public AudioSource levelMusic; // M˙sica del nivel
+    [Header("M√∫sica del nivel")]
+    public AudioSource levelMusic;
+
+    [Header("Canvas de UI (Fragmentos / Score)")]
+    public GameObject gameplayCanvas;   // ‚Üê TU CANVAS DE FRAGMENTOS
 
     [Header("Omitir")]
     public Button skipButton;
@@ -22,15 +25,19 @@ public class LevelIntroVideo : MonoBehaviour
 
     void Start()
     {
-        // Apagar m˙sica del nivel al inicio
+        // Pausar m√∫sica del nivel
         if (levelMusic != null)
-            levelMusic.Stop();
+            levelMusic.Pause();
+
+        // Ocultar UI de gameplay (fragmentos)
+        if (gameplayCanvas != null)
+            gameplayCanvas.SetActive(false);
 
         // Desactivar jugador
         if (player != null)
             player.SetActive(false);
 
-        // Configurar botÛn Omitir
+        // Configurar bot√≥n Omitir
         if (skipButton != null)
         {
             skipButton.gameObject.SetActive(false);
@@ -43,7 +50,7 @@ public class LevelIntroVideo : MonoBehaviour
         // Reproducir video
         videoPlayer.Play();
 
-        // Activar omitir despuÈs de X segundos
+        // Activar omitir despu√©s de X segundos
         Invoke(nameof(EnableSkip), skipDelay);
     }
 
@@ -87,8 +94,17 @@ public class LevelIntroVideo : MonoBehaviour
         if (player != null)
             player.SetActive(true);
 
-        // Iniciar m˙sica del nivel
+        // Volver a mostrar UI de gameplay
+        if (gameplayCanvas != null)
+            gameplayCanvas.SetActive(true);
+
+        // Reanudar m√∫sica del nivel
         if (levelMusic != null)
-            levelMusic.Play();
+            levelMusic.UnPause();
+    }
+
+    void OnDestroy()
+    {
+        videoPlayer.loopPointReached -= OnVideoFinished;
     }
 }

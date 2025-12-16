@@ -1,16 +1,16 @@
 using UnityEngine;
 
-public class MovimientoVertical : MonoBehaviour
+public class MovimientoVertical_Fluido : MonoBehaviour
 {
     [Header("Configuración de movimiento vertical")]
-    [Tooltip("Distancia máxima hacia arriba y hacia abajo desde el punto inicial.")]
+    [Tooltip("Altura máxima desde la posición inicial (eje Y).")]
     public float distancia = 3f;
 
-    [Tooltip("Velocidad de movimiento vertical.")]
+    [Tooltip("Velocidad del movimiento vertical.")]
     public float velocidad = 2f;
 
     private Vector3 posicionInicial;
-    private int direccion = 1;
+    private float tiempo;
 
     private void Start()
     {
@@ -19,12 +19,16 @@ public class MovimientoVertical : MonoBehaviour
 
     private void Update()
     {
-        transform.Translate(Vector3.up * direccion * velocidad * Time.deltaTime);
+        // Movimiento suave arriba y abajo
+        tiempo += Time.deltaTime * velocidad;
 
-        if (Vector3.Distance(transform.position, posicionInicial) >= distancia)
-        {
-            direccion *= -1;
-        }
+        float desplazamientoY = Mathf.PingPong(tiempo, distancia * 2) - distancia;
+
+        transform.position = new Vector3(
+            posicionInicial.x,
+            posicionInicial.y + desplazamientoY,
+            posicionInicial.z
+        );
     }
 
     private void OnCollisionEnter(Collision collision)

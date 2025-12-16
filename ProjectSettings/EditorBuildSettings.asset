@@ -22,8 +22,8 @@ EditorBuildSettings:
     guid: 8cf2927d89680448aa085f3d99f2d765
   - enabled: 1
     path: Assets/Levels/L5 - KAREN.unity
-    guid: c744f9f6a556ca940bfb843f3b4af190
-  - enabled: 0
-    path: Assets/Levels/Main Menu.unity
-    guid: ae9cf6861e7894ed189b29b414ccbc50
+    guid: 8e26c0f3caa08bc468263cf27b192198
+  - enabled: 1
+    path: Assets/Levels/END.unity
+    guid: 49fa02add54b4924995288a775a601c7
   m_configObjects: {}

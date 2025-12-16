@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Menú de Pausa")]
     public GameObject menuPausaPrefab;
     private GameObject menuPausaInstance;
 
@@ -10,7 +11,9 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        // Singleton: evitar duplicados de GameManager
+        // ============================
+        //  SINGLETON
+        // ============================
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
@@ -20,15 +23,48 @@ public class GameManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // Escuchar cambios de escena
+        // Escuchar cambio de escenas
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
+    void OnDestroy()
+    {
+        // Evitar errores al salir del juego
+        if (instance == this)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+    }
+
+    // ============================
+    //  MANEJO DE ESCENAS
+    // ============================
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // ⛔ SI LA ESCENA ES MENU → DESTRUIR MENÚ PAUSA
+        // ============================
+        //  ESCENAS DE UI → CURSOR VISIBLE
+        // ============================
+        if (scene.name == "MENU" || scene.name == "END")
+        {
+            Time.timeScale = 1f;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            // ============================
+            //  ESCENAS DE JUEGO → CURSOR OCULTO
+            // ============================
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
+        // ============================
+        //  MENU PRINCIPAL
+        // ============================
         if (scene.name == "MENU")
         {
+            // Destruir menú pausa si existe
             if (menuPausaInstance != null)
             {
                 Destroy(menuPausaInstance);
@@ -37,7 +73,9 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // ✔ CREAR MENÚ PAUSA SOLO UNA VEZ
+        // ============================
+        //  CREAR MENÚ PAUSA EN GAMEPLAY
+        // ============================
         if (menuPausaInstance == null)
         {
             menuPausaInstance = Instantiate(menuPausaPrefab);
